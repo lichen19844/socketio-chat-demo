@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: 0.5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 消息聊天列表 -->
+  <ul id="messages">
+    <li>hello</li>
+    <li>hi there</li>
+    <li>ok</li>
+  </ul>
+  <!-- 发送消息表单 -->
+  <form action="">
+    <input id="m" autocomplete="off" /><button>Send</button>
+  </form>
+
+  <!-- 加载 socket.io 的客户端脚本，客户端会向全局暴露一个接口：io -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    // 默认和当前网页连接，也可以指定连接地址
+    var socket = io();
+
+    socket.on('a', data => {
+      console.log(data)
+    })
+    socket.on('time', data => {
+      console.log(data)
+    })
+    socket.emit('hello', '椰椰酱最棒')
+  </script>
+</body>
+
+</html>
