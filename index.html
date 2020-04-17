@@ -3,6 +3,9 @@
 
 <head>
   <title>Socket.IO chat</title>
+  <meta name="viewport" content="width=device-width,
+  user-scalable=no, initial-scale=1.0,
+  maximum-scale=1.0, minimum-scale=1.0">
   <style>
     * {
       margin: 0;
@@ -53,31 +56,78 @@
 </head>
 
 <body>
-  <!-- 消息聊天列表 -->
-  <ul id="messages">
-    <li>hello</li>
-    <li>hi there</li>
-    <li>ok</li>
-  </ul>
-  <!-- 发送消息表单 -->
-  <form action="">
-    <input id="m" autocomplete="off" /><button>Send</button>
-  </form>
+  <div id="app">
+    <!-- 消息聊天列表 -->
+    <ul v-model="messages" id="messages">
+      <!-- <li>hello</li>
+      <li>hi there</li>
+      <li>ok</li> -->
+      <li v-for="msg of messages" :key="msg">
+        {{msg}}
+      </li>
+    </ul>
+    <!-- 发送消息表单 -->
+    <form action="" @submit.prevent="onSend">
+      <input v-model.trim="message" id="m" autocomplete="off" /><button>Send</button>
+    </form>
+  </div>
 
   <!-- 加载 socket.io 的客户端脚本，客户端会向全局暴露一个接口：io -->
   <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cn.vuejs.org/js/vue.js"></script>
 
   <script>
     // 默认和当前网页连接，也可以指定连接地址
     var socket = io();
 
-    socket.on('a', data => {
-      console.log(data)
+    // socket.on('a', data => {
+    //   console.log(data)
+    // })
+    // socket.on('time', data => {
+    //   console.log(data)
+    // })
+    // // 客户端给服务端发事件
+    // // socket.emit('hello', '椰椰酱最棒')
+    // socket.emit('hello', '前端说：你是猪+1')
+    // socket.on('hello', data => {
+    //   console.log(data)
+    // })
+
+    new Vue({
+      el: '#app',
+      data: {
+        message: '',
+        messages: []  // 消息列表
+      },
+      created () {
+        socket.on('chat message', msg => {
+          // 将最新消息放入顶部
+          this.messages.unshift(msg)
+        })
+      },
+      methods: {
+        onSend () {
+          // 按钮发送消息
+          const message = this.message
+          if (!message.length) {
+            window.alert('请输入内容')
+            return
+          }
+          // 防止内容过多霸屏
+          if (message.length > 20) {
+            window.alert('不能大于20个字符')
+            return
+          }
+          // 发送具体消息
+          socket.emit('chat-message',
+            message)
+          
+            // 清空文本框
+          this.message = ''
+        }
+      }
     })
-    socket.on('time', data => {
-      console.log(data)
-    })
-    socket.emit('hello', '椰椰酱最棒')
+
   </script>
 </body>
 
